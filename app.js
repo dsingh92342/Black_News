@@ -309,7 +309,7 @@
       state.history = state.history.slice(0, 50);
       saveHistory();
 
-      showToast(`✅ Generated ${articles.length} Artices`, 'success');
+      showToast(`✅ Generated ${articles.length} Articles`, 'success');
     } catch (err) {
       console.error(err);
       showErrorState(err.message);
@@ -400,16 +400,41 @@
   }
 
   function parseArticles(text) {
-    if (!text) throw new Error('Empty response');
-    const cleaned = text.replace(/```json/g, '').replace(/```/g, '').trim();
+    if (!text) throw new Error('No content received from AI');
+    
+    // Remove markdown code fences and surrounding whitespace
+    let cleaned = text.replace(/```json/g, '').replace(/```/g, '').trim();
+    
     try {
+      // Direct parse
       const result = JSON.parse(cleaned);
       return Array.isArray(result) ? result : [result];
     } catch (e) {
-        const match = cleaned.match(/\[.*\]/s);
-        if (match) return JSON.parse(match[0]);
-        throw new Error('Failed to parse articles JSON');
+      // Regex fallback for embedded JSON
+      const jsonMatch = cleaned.match(/\[[\s\S]*\]/);
+      if (jsonMatch) {
+        try {
+          return JSON.parse(jsonMatch[0]);
+        } catch (e2) {
+          throw new Error('Intelligence data was malformed. Please try again.');
+        }
+      }
+      throw new Error('Could not extract valid articles from AI response.');
     }
+  }
+
+  function showErrorState(message) {
+    dom.resultsHeader.classList.add('hidden');
+    dom.articlesContainer.innerHTML = `
+      <div class="card" style="text-align:center; padding: 60px 40px; border-color: rgba(239, 68, 68, 0.2);">
+        <div style="font-size: 4rem; margin-bottom: 24px;">⚠️</div>
+        <h3 style="color: #ef4444; font-size: 1.5rem; margin-bottom: 12px;">Intelligence Interrupted</h3>
+        <p style="color: var(--text-dim); margin-bottom: 24px;">${message}</p>
+        <button class="btn-generate" onclick="location.reload()" style="margin: 0 auto; padding: 12px 24px; font-size: 0.9rem;">
+          Retry System
+        </button>
+      </div>
+    `;
   }
 
   // ─── Rendering ───

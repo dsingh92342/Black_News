@@ -94,7 +94,7 @@ Black News is designed to be hosted for free on GitHub Pages:
 3.  Under **Build and deployment**, select:
     *   **Source:** Deploy from a branch
     *   **Branch:** `main` (or yours) → `/ (root)`
-4.  Wait for the build to complete. Your app will be live at `https://yourusername.github.io/Black_News/`.
+4.  Wait for the build to complete. Your app will be live at `https://dsingh92342.github.io/Black_News/`.
 
 ---
 
