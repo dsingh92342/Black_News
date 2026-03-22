@@ -105,6 +105,7 @@
     setupGenerateButton();
     setupHistory();
     setupKeyboardShortcuts();
+    setupInteractiveEffects();
     registerServiceWorker();
   }
 
@@ -533,6 +534,42 @@
     t.textContent = msg;
     dom.toastContainer.appendChild(t);
     setTimeout(() => t.remove(), 3000);
+  }
+
+  // ─── Interactive Effects ───
+  function setupInteractiveEffects() {
+    // Mouse-follow glow for cards
+    document.addEventListener('mousemove', (e) => {
+      const cards = $$('.card');
+      cards.forEach(card => {
+        const rect = card.getBoundingClientRect();
+        const x = ((e.clientX - rect.left) / rect.width) * 100;
+        const y = ((e.clientY - rect.top) / rect.height) * 100;
+        card.style.setProperty('--x', `${x}%`);
+        card.style.setProperty('--y', `${y}%`);
+      });
+    });
+
+    // Magnetic buttons
+    const magneticElements = $$('.btn-generate, .icon-btn, .action-btn');
+    document.addEventListener('mousemove', (e) => {
+      magneticElements.forEach(el => {
+        const rect = el.getBoundingClientRect();
+        const centerX = rect.left + rect.width / 2;
+        const centerY = rect.top + rect.height / 2;
+        const distanceX = e.clientX - centerX;
+        const distanceY = e.clientY - centerY;
+        const distance = Math.sqrt(distanceX * distanceX + distanceY * distanceY);
+
+        if (distance < 100) {
+          const x = distanceX * 0.2;
+          const y = distanceY * 0.2;
+          el.style.transform = `translate(${x}px, ${y}px) scale(1.05)`;
+        } else {
+          el.style.transform = '';
+        }
+      });
+    });
   }
 
   function registerServiceWorker() {
