@@ -207,7 +207,45 @@ a:hover { text-decoration: underline; }
   background: var(--bg-input-focus);
   border-color: var(--border-color-hover);
   color: var(--text-primary);
-  transform: translateY(-1px);
+  transform: translateY(1px);
+}
+
+.article-translate-group {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+}
+
+.lang-select {
+  padding: 8px 10px;
+  background: var(--bg-input);
+  border: 1px solid var(--border-color);
+  border-radius: var(--radius-md);
+  color: var(--text-secondary);
+  font-family: var(--font-sans);
+  font-size: 0.75rem;
+  font-weight: 500;
+  outline: none;
+  cursor: pointer;
+  transition: all var(--transition-fast);
+}
+
+.lang-select:hover {
+  background: var(--bg-input-focus);
+  border-color: var(--border-color-hover);
+}
+
+.article-btn.speaking {
+  background: var(--error);
+  color: #fff;
+  border-color: transparent;
+  animation: pulse-speaking 1.5s ease-in-out infinite;
+}
+
+@keyframes pulse-speaking {
+  0% { box-shadow: 0 0 0 0 rgba(239, 68, 68, 0.4); }
+  70% { box-shadow: 0 0 0 10px rgba(239, 68, 68, 0); }
+  100% { box-shadow: 0 0 0 0 rgba(239, 68, 68, 0); }
 }
 
 .icon-btn .badge {

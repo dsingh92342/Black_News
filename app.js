@@ -71,11 +71,13 @@
     provider: 'gemini',
     apiKeys: {}, // { gemini: 'key', openai: 'key', ... }
     selectedCategory: 'technology',
+    selectedTone: 'Serious',
+    selectedLength: 'Medium',
     customTopic: '',
     articleCount: 3,
     isGenerating: false,
+    speakingArticleId: null,
     articles: [],
-    history: [],
   };
 
   // ─── DOM References ───
@@ -103,6 +105,8 @@
     // Generator
     categories: $('#categories'),
     topicInput: $('#topicInput'),
+    toneSelector: $('#toneSelector'),
+    lengthSelector: $('#lengthSelector'),
     countSelector: $('#countSelector'),
     generateBtn: $('#generateBtn'),
 
@@ -133,11 +137,24 @@
     setupProviderSelector();
     setupAPISection();
     setupCategories();
-    setupCountSelector();
     setupTopicInput();
+    setupToneSelector();
+    setupLengthSelector();
+    setupCountSelector();
     setupGenerateButton();
     setupHistory();
     setupKeyboardShortcuts();
+    registerServiceWorker();
+  }
+
+  function registerServiceWorker() {
+    if ('serviceWorker' in navigator) {
+      window.addEventListener('load', () => {
+        navigator.serviceWorker.register('./sw.js')
+          .then(reg => console.log('SW Registered', reg))
+          .catch(err => console.log('SW Registration failed', err));
+      });
+    }
   }
 
   // ─── State Persistence ───
@@ -339,6 +356,30 @@
     });
   }
 
+  // ─── Tone Selector ───
+  function setupToneSelector() {
+    dom.toneSelector.addEventListener('click', (e) => {
+      const chip = e.target.closest('.tone-chip');
+      if (!chip) return;
+
+      $$('.tone-chip').forEach(c => c.classList.remove('active'));
+      chip.classList.add('active');
+      state.selectedTone = chip.dataset.tone;
+    });
+  }
+
+  // ─── Length Selector ───
+  function setupLengthSelector() {
+    dom.lengthSelector.addEventListener('click', (e) => {
+      const chip = e.target.closest('.length-chip');
+      if (!chip) return;
+
+      $$('.length-chip').forEach(c => c.classList.remove('active'));
+      chip.classList.add('active');
+      state.selectedLength = chip.dataset.length;
+    });
+  }
+
   // ─── Generate ───
   function setupGenerateButton() {
     dom.generateBtn.addEventListener('click', () => {
@@ -377,6 +418,8 @@
           ...article,
           savedAt: new Date().toISOString(),
           provider: state.provider,
+          tone: state.selectedTone,
+          length: state.selectedLength
         });
       });
       // Keep max 50 in history
@@ -521,15 +564,23 @@
       ? `the "${topic}" category`
       : `the topic: "${topic}"`;
 
+    const lengthDesc = {
+      'Short': '1-2 concise paragraphs',
+      'Medium': '3-4 professional paragraphs',
+      'Long': 'a comprehensive deep-dive with 5-6 informative paragraphs'
+    }[state.selectedLength] || '3-4 professional paragraphs';
+
     return `You are a professional news journalist. Generate exactly ${count} unique, realistic, and well-written news article${count > 1 ? 's' : ''} about ${topicLabel}.
+
+Use a **${state.selectedTone}** tone for all articles.
 
 For EACH article, output in this exact JSON format (output only a valid JSON array, no other text):
 
 [
   {
-    "headline": "A compelling, journalistic headline",
+    "headline": "A compelling, journalistic headline reflecting the ${state.selectedTone} tone",
     "summary": "A 1-2 sentence summary of the article",
-    "body": "A well-written 3-4 paragraph article body. Use professional journalistic tone. Include quotes from fictional but realistic sources. Make it feel like a real news article from a major publication.",
+    "body": "A well-written article body with approximately ${lengthDesc}. Use a ${state.selectedTone} journalistic tone. Include quotes from fictional but realistic sources. Make it feel like a real news article from a major publication.",
     "source": "Name of a fictional but realistic news source",
     "category": "${isCategory ? topic : 'custom'}",
     "readingTime": estimated reading time in minutes (number)
@@ -650,9 +701,26 @@ Important rules:
             <button class="article-btn" onclick="BlackNews.toggleBody('${article.id}')">
               📖 <span id="toggle-text-${article.id}">Read Full Article</span>
             </button>
+            <button class="article-btn" id="listen-btn-${article.id}" onclick="BlackNews.speakArticle('${article.id}')">
+              🔊 Listen
+            </button>
             <button class="article-btn" onclick="BlackNews.copyArticle('${article.id}')">
               📋 Copy
             </button>
+            <div class="article-translate-group">
+              <button class="article-btn" id="translate-btn-${article.id}" onclick="BlackNews.translateArticle('${article.id}')">
+                🌐 Translate
+              </button>
+              <select class="lang-select" id="lang-select-${article.id}" onchange="BlackNews.translateArticle('${article.id}')">
+                <option value="Hindi">Hindi</option>
+                <option value="Spanish">Spanish</option>
+                <option value="French">French</option>
+                <option value="German">German</option>
+                <option value="Japanese">Japanese</option>
+                <option value="Chinese">Chinese</option>
+                <option value="Arabic">Arabic</option>
+              </select>
+            </div>
             <button class="article-btn" onclick="BlackNews.shareArticle('${article.id}')">
               🔗 Share
             </button>
@@ -730,6 +798,116 @@ Important rules:
   function findArticleById(id) {
     return state.articles.find(a => a.id === id) ||
       state.history.find(a => a.id === id);
+  }
+
+  // ─── Voice Narration (TTS) ───
+  function speakArticle(id) {
+    // If already speaking this article, stop it
+    if (state.speakingArticleId === id) {
+      stopSpeaking();
+      return;
+    }
+
+    // Stop any current speech
+    stopSpeaking();
+
+    const article = findArticleById(id);
+    if (!article) return;
+
+    const textToSpeak = `${article.headline}. Published by ${article.source}. ${article.summary}. ${article.body}`;
+    const utterance = new SpeechSynthesisUtterance(textToSpeak);
+    
+    utterance.onstart = () => {
+      state.speakingArticleId = id;
+      const btn = document.getElementById(`listen-btn-${id}`);
+      if (btn) {
+        btn.innerHTML = '🛑 Stop';
+        btn.classList.add('speaking');
+      }
+    };
+
+    utterance.onend = () => {
+      state.speakingArticleId = null;
+      const btn = document.getElementById(`listen-btn-${id}`);
+      if (btn) {
+        btn.innerHTML = '🔊 Listen';
+        btn.classList.remove('speaking');
+      }
+    };
+
+    utterance.onerror = (event) => {
+      console.error('Speech synthesis error:', event);
+      state.speakingArticleId = null;
+      const btn = document.getElementById(`listen-btn-${id}`);
+      if (btn) {
+        btn.innerHTML = '🔊 Listen';
+        btn.classList.remove('speaking');
+      }
+      showToast('Speech synthesis failed', 'error');
+    };
+
+    window.speechSynthesis.speak(utterance);
+  }
+
+  function stopSpeaking() {
+    window.speechSynthesis.cancel();
+    if (state.speakingArticleId) {
+      const btn = document.getElementById(`listen-btn-${state.speakingArticleId}`);
+      if (btn) {
+        btn.innerHTML = '🔊 Listen';
+        btn.classList.remove('speaking');
+      }
+      state.speakingArticleId = null;
+    }
+  }
+
+  // ─── Instant Translation ───
+  async function translateArticle(id) {
+    const article = findArticleById(id);
+    const langSelect = document.getElementById(`lang-select-${id}`);
+    const targetLang = langSelect ? langSelect.value : 'Hindi';
+    const btn = document.getElementById(`translate-btn-${id}`);
+
+    if (!article || !getCurrentKey() || state.isGenerating) return;
+
+    btn.disabled = true;
+    btn.innerHTML = `🌐 Translating...`;
+    
+    const prompt = `Translate the following news article into ${targetLang}. 
+Keep the SAME JSON structure. Do not change the headline context, just translate the text.
+Output ONLY the valid JSON object for this single article.
+
+${JSON.stringify({
+      headline: article.headline,
+      summary: article.summary,
+      body: article.body,
+      source: article.source,
+      category: article.category,
+      readingTime: article.readingTime
+    })}`;
+
+    try {
+      const response = await callAI(state.provider, getCurrentKey(), prompt, 1);
+      const translated = response[0];
+      
+      if (translated) {
+        // Update the UI directly
+        const card = document.querySelector(`[data-id="${id}"]`);
+        if (card) {
+          card.querySelector('.article-headline').textContent = translated.headline;
+          card.querySelector('.article-summary').textContent = translated.summary;
+          card.querySelector('.article-body').innerHTML = formatBody(translated.body);
+          card.querySelector('.article-source').textContent = `📌 Source: ${translated.source} (Translated)`;
+          showToast(`✅ Translated to ${targetLang}`, 'success');
+        }
+      }
+    } catch (err) {
+      console.error('Translation error:', err);
+      showToast(`❌ Translation failed: ${err.message}`, 'error');
+    } finally {
+      btn.disabled = false;
+      btn.innerHTML = `🌐 Translate`;
+    }
   }
 
   // ─── History ───
@@ -860,6 +1038,9 @@ Important rules:
     copyArticle,
     shareArticle,
     viewHistoryArticle,
+    speakArticle,
+    stopSpeaking,
+    translateArticle,
   };
 
   // ─── Start ───

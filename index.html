@@ -1,18 +1,26 @@
 <!DOCTYPE html>
 <html lang="en" data-theme="dark">
+
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Black News — AI-Powered News Generator</title>
-  <meta name="description" content="Generate high-quality, AI-powered news articles on any topic. Supports Google Gemini, OpenAI, OpenRouter, Cohere, and Mistral. Paste your API key and get instant news." />
-  <meta name="keywords" content="AI news, news generator, Gemini AI, OpenAI, GPT, artificial intelligence, news articles" />
+  <meta name="description"
+    content="Generate high-quality, AI-powered news articles on any topic. Supports Google Gemini, OpenAI, OpenRouter, Cohere, and Mistral. Paste your API key and get instant news." />
+  <meta name="keywords"
+    content="AI news, news generator, Gemini AI, OpenAI, GPT, artificial intelligence, news articles" />
   <meta name="author" content="Black News" />
   <meta property="og:title" content="Black News — AI-Powered News Generator" />
-  <meta property="og:description" content="Generate high-quality, AI-powered news articles on any topic. Supports multiple AI providers." />
+  <meta property="og:description"
+    content="Generate high-quality, AI-powered news articles on any topic. Supports multiple AI providers." />
   <meta property="og:type" content="website" />
-  <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>📰</text></svg>" />
+  <link rel="icon"
+    href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>📰</text></svg>" />
+  <link rel="manifest" href="manifest.json" />
+  <meta name="theme-color" content="#6c5ce7" />
   <link rel="stylesheet" href="style.css" />
 </head>
+
 <body>
 
   <!-- ===== HEADER ===== -->
@@ -39,8 +47,11 @@
 
     <!-- Hero / Intro -->
     <section style="text-align:center; margin-bottom: 40px; padding-top: 16px;">
-      <h1 style="font-family: var(--font-serif); font-size: 2.4rem; font-weight: 900; line-height: 1.2; margin-bottom: 12px;">
-        AI-Powered <span style="background: var(--accent-gradient); -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text;">News Generator</span>
+      <h1
+        style="font-family: var(--font-serif); font-size: 2.4rem; font-weight: 900; line-height: 1.2; margin-bottom: 12px;">
+        AI-Powered <span
+          style="background: var(--accent-gradient); -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text;">News
+          Generator</span>
       </h1>
       <p style="color: var(--text-secondary); font-size: 1.05rem; max-width: 540px; margin: 0 auto;">
         Generate professional news articles on any topic instantly. Choose your AI provider.
@@ -86,21 +97,17 @@
         </div>
         <div class="api-input-group" style="margin-top: 16px;">
           <div class="api-input-wrapper">
-            <input
-              type="password"
-              class="api-input"
-              id="apiKeyInput"
-              placeholder="Paste your API key here..."
-              autocomplete="off"
-              spellcheck="false"
-            />
-            <button class="toggle-visibility" id="toggleKeyVisibility" title="Show/Hide key" aria-label="Toggle key visibility">👁️</button>
+            <input type="password" class="api-input" id="apiKeyInput" placeholder="Paste your API key here..."
+              autocomplete="off" spellcheck="false" />
+            <button class="toggle-visibility" id="toggleKeyVisibility" title="Show/Hide key"
+              aria-label="Toggle key visibility">👁️</button>
           </div>
           <button class="btn-primary" id="saveKeyBtn">Save Key</button>
           <button class="btn-danger hidden" id="removeKeyBtn">Remove</button>
         </div>
         <p class="api-help" id="apiHelp">
-          💡 Get your free API key at <a href="https://aistudio.google.com/apikey" target="_blank" rel="noopener noreferrer" id="apiHelpLink">aistudio.google.com</a>
+          💡 Get your free API key at <a href="https://aistudio.google.com/apikey" target="_blank"
+            rel="noopener noreferrer" id="apiHelpLink">aistudio.google.com</a>
           — your key is stored locally and never shared.
         </p>
       </div>
@@ -139,12 +146,31 @@
 
         <div class="topic-group">
           <p class="section-title">Or enter a custom topic</p>
-          <input
-            type="text"
-            class="topic-input"
-            id="topicInput"
-            placeholder="e.g., Artificial Intelligence in Healthcare, Space Exploration 2026..."
-          />
+          <input type="text" class="topic-input" id="topicInput"
+            placeholder="e.g., Artificial Intelligence in Healthcare, Space Exploration 2026..." />
+        </div>
+
+        <!-- Tone Selector -->
+        <div class="control-group">
+          <label class="control-label">🎭 Article Tone</label>
+          <div class="tone-selector" id="toneSelector">
+            <button class="tone-chip active" data-tone="Serious">Serious</button>
+            <button class="tone-chip" data-tone="Professional">Professional</button>
+            <button class="tone-chip" data-tone="Funny">Funny</button>
+            <button class="tone-chip" data-tone="Sarcastic">Sarcastic</button>
+            <button class="tone-chip" data-tone="Breaking News">Breaking</button>
+            <button class="tone-chip" data-tone="Exaggerated">Exaggerated</button>
+          </div>
+        </div>
+
+        <!-- Length Selector -->
+        <div class="control-group">
+          <label class="control-label">📏 Article Length</label>
+          <div class="length-selector" id="lengthSelector">
+            <button class="length-chip" data-length="Short">Short</button>
+            <button class="length-chip active" data-length="Medium">Medium</button>
+            <button class="length-chip" data-length="Long">Long</button>
+          </div>
         </div>
 
         <div class="generate-row">
@@ -177,7 +203,8 @@
         <div class="empty-state" id="emptyState">
           <div class="empty-icon">📰</div>
           <div class="empty-title">No articles yet</div>
-          <div class="empty-subtitle">Select a category or enter a topic above, then hit Generate to create AI-powered news articles.</div>
+          <div class="empty-subtitle">Select a category or enter a topic above, then hit Generate to create AI-powered
+            news articles.</div>
         </div>
       </div>
     </section>
@@ -195,7 +222,8 @@
       <div class="history-empty" id="historyEmpty">No saved articles yet.</div>
     </div>
     <div class="history-footer">
-      <button class="btn-danger" id="clearHistoryBtn" style="width:100%; text-align:center; justify-content: center; display:flex;">Clear All History</button>
+      <button class="btn-danger" id="clearHistoryBtn"
+        style="width:100%; text-align:center; justify-content: center; display:flex;">Clear All History</button>
     </div>
   </aside>
 
@@ -204,10 +232,13 @@
 
   <!-- ===== FOOTER ===== -->
   <footer class="footer">
-    <p>Built with ❤️ and AI &nbsp;·&nbsp; Supports Gemini, OpenAI, OpenRouter, Cohere & Mistral &nbsp;·&nbsp; <a href="https://github.com" target="_blank">View on GitHub</a></p>
-    <p style="margin-top: 6px; font-size: 0.75rem; color: var(--text-muted);">Your API key never leaves your browser. 100% client-side.</p>
+    <p>Built with ❤️ and AI &nbsp;·&nbsp; Supports Gemini, OpenAI, OpenRouter, Cohere & Mistral &nbsp;·&nbsp; <a
+        href="https://dsingh92342.github.io/Black_News/" target="_blank">View on GitHub</a></p>
+    <p style="margin-top: 6px; font-size: 0.75rem; color: var(--text-muted);">Your API key never leaves your browser.
+      100% client-side.</p>
   </footer>
 
   <script src="app.js"></script>
 </body>
+
 </html>
