@@ -1,6 +1,6 @@
 # ⚡ Black News — AI-Powered News Generator
 
-> Generate professional, AI-written news articles on any topic instantly. Powered by **Google Gemini AI**.
+> Generate professional, AI-written news articles on any topic instantly. Supports **multiple AI providers** — use your favorite.
 
 ![Black News](https://img.shields.io/badge/Black_News-AI_Powered-6c5ce7?style=for-the-badge&logo=google&logoColor=white)
 ![License](https://img.shields.io/badge/License-MIT-10b981?style=for-the-badge)
@@ -8,39 +8,51 @@
 
 ---
 
+## 🤖 Supported AI Providers
+
+| Provider | Model | Free Tier | Get API Key |
+|---|---|---|---|
+| **Google Gemini** | gemini-2.0-flash | ✅ Yes | [aistudio.google.com](https://aistudio.google.com/apikey) |
+| **OpenAI** | gpt-4o-mini | ❌ Paid | [platform.openai.com](https://platform.openai.com/api-keys) |
+| **OpenRouter** | gemini-2.0-flash (free) | ✅ Yes | [openrouter.ai](https://openrouter.ai/keys) |
+| **Cohere** | command-r-plus | ✅ Trial | [dashboard.cohere.com](https://dashboard.cohere.com/api-keys) |
+| **Mistral** | mistral-small-latest | ✅ Free tier | [console.mistral.ai](https://console.mistral.ai/api-keys) |
+
+> 💡 **Recommended:** Google Gemini or OpenRouter — both offer free API keys.
+
+---
+
 ## ✨ Features
 
-| Feature | Description |
+| Feature | Details |
 |---|---|
-| 🤖 **AI Article Generation** | Generate realistic, professional news articles using Google Gemini |
+| 🤖 **Multi-Provider AI** | Switch between Gemini, OpenAI, OpenRouter, Cohere, and Mistral |
 | 📂 **8 News Categories** | Technology, Business, Science, Health, Sports, Entertainment, Politics, World |
 | ✏️ **Custom Topics** | Enter any topic and get tailored articles |
 | 📰 **Multi-Article Generation** | Generate 1–5 articles at once |
-| 📋 **Article History** | All generated articles are saved locally |
-| 🌗 **Dark & Light Theme** | Beautiful dark mode by default with a light mode toggle |
-| 📱 **Fully Responsive** | Works on desktop, tablet, and mobile |
-| 🔒 **Privacy First** | API key stored only in your browser — never sent to any third party |
+| 📋 **Article History** | All generated articles saved locally |
+| 🌗 **Dark & Light Theme** | Beautiful dark mode by default with light mode toggle |
+| 📱 **Fully Responsive** | Desktop, tablet, and mobile |
+| 🔒 **Privacy First** | API keys stored only in your browser — never shared |
 | ⌨️ **Keyboard Shortcuts** | `Ctrl+Enter` to generate, `Esc` to close panels |
-| 📤 **Share & Copy** | Easily copy or share generated articles |
+| 📤 **Share & Copy** | One-click copy or share articles |
+| 🔑 **Per-Provider Keys** | Save different keys for each provider |
 
 ---
 
 ## 🚀 Quick Start
 
 ### 1. Get a Free API Key
-- Visit [Google AI Studio](https://aistudio.google.com/apikey)
-- Sign in with your Google account
-- Click **"Create API Key"**
-- Copy the key
+Pick any provider from the table above. **Recommended:** [Google Gemini](https://aistudio.google.com/apikey) (free).
 
 ### 2. Use Black News
 - Open the app: **[Live Demo →](https://yourusername.github.io/Black_News/)**
-- Paste your API key in the configuration section
-- Click **Save Key**
-- Pick a category or type a custom topic
+- Select your AI provider (Gemini, OpenAI, etc.)
+- Paste your API key → click **Save Key**
+- Pick a news category or type a custom topic
 - Hit **⚡ Generate News**
 
-That's it! Your articles will appear instantly.
+That's it! Articles appear instantly.
 
 ---
 
@@ -48,11 +60,11 @@ That's it! Your articles will appear instantly.
 
 | Technology | Purpose |
 |---|---|
-| **HTML5** | Semantic page structure |
+| **HTML5** | Semantic structure |
 | **CSS3** | Custom properties, glassmorphism, dark/light theming, animations |
-| **Vanilla JavaScript** | All logic — no frameworks, no dependencies |
-| **Google Gemini API** | AI-powered article generation |
-| **localStorage** | Client-side persistence for API key, theme, and history |
+| **Vanilla JavaScript** | All logic — zero dependencies, zero frameworks |
+| **Multiple AI APIs** | Gemini, OpenAI, OpenRouter, Cohere, Mistral |
+| **localStorage** | Client-side persistence for keys, theme, history |
 
 **Zero dependencies. No build step. Just open and use.**
 
@@ -64,7 +76,7 @@ That's it! Your articles will appear instantly.
 Black_News/
 ├── index.html    # Single-page app
 ├── style.css     # Design system & styles
-├── app.js        # Application logic & API integration
+├── app.js        # Multi-provider AI logic
 └── README.md     # This file
 ```
 
@@ -72,8 +84,8 @@ Black_News/
 
 ## 🔒 Privacy & Security
 
-- Your API key is stored **only** in your browser's `localStorage`
-- It is **never** sent to any server other than Google's Gemini API
+- API keys are stored **only** in your browser's `localStorage`
+- Keys are sent **only** to their respective AI provider's API
 - No analytics, no tracking, no cookies
 - Fully open-source — inspect the code yourself
 
@@ -118,5 +130,5 @@ This project is licensed under the **MIT License** — feel free to use, modify,
 ---
 
 <p align="center">
-  Made with ❤️ and Google Gemini AI
+  Made with ❤️ · Supports Gemini, OpenAI, OpenRouter, Cohere & Mistral
 </p>

@@ -526,6 +526,52 @@ a:hover { text-decoration: underline; }
   font-size: 14px;
 }
 
+/* --- Provider Chips --- */
+.provider-selector {
+  margin-bottom: 4px;
+}
+
+.provider-chips {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+}
+
+.provider-chip {
+  padding: 8px 18px;
+  border-radius: var(--radius-full);
+  border: 1px solid var(--border-color);
+  background: var(--bg-input);
+  color: var(--text-secondary);
+  font-family: var(--font-sans);
+  font-size: 0.85rem;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all var(--transition-fast);
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  user-select: none;
+}
+
+.provider-chip:hover {
+  border-color: var(--border-color-hover);
+  background: var(--bg-input-focus);
+  color: var(--text-primary);
+  transform: translateY(-1px);
+}
+
+.provider-chip.active {
+  background: var(--accent-gradient);
+  border-color: transparent;
+  color: #fff;
+  box-shadow: var(--shadow-glow);
+}
+
+.provider-chip .chip-icon {
+  font-size: 14px;
+}
+
 /* --- Custom Topic Input --- */
 .topic-group {
   margin-bottom: 24px;

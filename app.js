@@ -1,14 +1,62 @@
 /* ============================================
-   BLACK NEWS – App Logic & Gemini Integration
+   BLACK NEWS – App Logic & Multi-Provider AI
+   Supports: Gemini, OpenAI, OpenRouter, Cohere, Mistral
    ============================================ */
 
 (function () {
   'use strict';
 
-  // ─── Constants ───
-  const GEMINI_API_URL = 'https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:generateContent';
+  // ─── Provider Configurations ───
+  const PROVIDERS = {
+    gemini: {
+      name: 'Google Gemini',
+      url: 'https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:generateContent',
+      helpUrl: 'https://aistudio.google.com/apikey',
+      helpText: 'aistudio.google.com',
+      placeholder: 'Paste your Gemini API key here...',
+      authType: 'query', // key goes in ?key= query param
+    },
+    openai: {
+      name: 'OpenAI',
+      url: 'https://api.openai.com/v1/chat/completions',
+      helpUrl: 'https://platform.openai.com/api-keys',
+      helpText: 'platform.openai.com',
+      placeholder: 'Paste your OpenAI API key (sk-...)...',
+      authType: 'bearer',
+      model: 'gpt-4o-mini',
+    },
+    openrouter: {
+      name: 'OpenRouter',
+      url: 'https://openrouter.ai/api/v1/chat/completions',
+      helpUrl: 'https://openrouter.ai/keys',
+      helpText: 'openrouter.ai',
+      placeholder: 'Paste your OpenRouter API key (sk-or-...)...',
+      authType: 'bearer',
+      model: 'google/gemini-2.0-flash-exp:free',
+    },
+    cohere: {
+      name: 'Cohere',
+      url: 'https://api.cohere.com/v2/chat',
+      helpUrl: 'https://dashboard.cohere.com/api-keys',
+      helpText: 'dashboard.cohere.com',
+      placeholder: 'Paste your Cohere API key here...',
+      authType: 'bearer',
+      model: 'command-r-plus',
+    },
+    mistral: {
+      name: 'Mistral',
+      url: 'https://api.mistral.ai/v1/chat/completions',
+      helpUrl: 'https://console.mistral.ai/api-keys',
+      helpText: 'console.mistral.ai',
+      placeholder: 'Paste your Mistral API key here...',
+      authType: 'bearer',
+      model: 'mistral-small-latest',
+    },
+  };
+
   const STORAGE_KEYS = {
-    apiKey: 'blacknews_api_key',
+    provider: 'blacknews_provider',
+    apiKeys: 'blacknews_api_keys', // stores keys per provider
     theme: 'blacknews_theme',
     history: 'blacknews_history',
   };
@@ -20,7 +68,8 @@
 
   // ─── State ───
   let state = {
-    apiKey: '',
+    provider: 'gemini',
+    apiKeys: {}, // { gemini: 'key', openai: 'key', ... }
     selectedCategory: 'technology',
     customTopic: '',
     articleCount: 3,
@@ -47,6 +96,9 @@
     removeKeyBtn: $('#removeKeyBtn'),
     apiStatus: $('#apiStatus'),
     apiStatusText: $('#apiStatusText'),
+    providerChips: $('#providerChips'),
+    apiHelp: $('#apiHelp'),
+    apiHelpLink: $('#apiHelpLink'),
 
     // Generator
     categories: $('#categories'),
@@ -78,6 +130,7 @@
   function init() {
     loadState();
     setupTheme();
+    setupProviderSelector();
     setupAPISection();
     setupCategories();
     setupCountSelector();
@@ -89,18 +142,28 @@
 
   // ─── State Persistence ───
   function loadState() {
-    state.apiKey = localStorage.getItem(STORAGE_KEYS.apiKey) || '';
+    state.provider = localStorage.getItem(STORAGE_KEYS.provider) || 'gemini';
+    state.apiKeys = JSON.parse(localStorage.getItem(STORAGE_KEYS.apiKeys) || '{}');
     state.history = JSON.parse(localStorage.getItem(STORAGE_KEYS.history) || '[]');
   }
 
-  function saveApiKey(key) {
-    state.apiKey = key;
-    localStorage.setItem(STORAGE_KEYS.apiKey, key);
+  function saveApiKey(provider, key) {
+    state.apiKeys[provider] = key;
+    localStorage.setItem(STORAGE_KEYS.apiKeys, JSON.stringify(state.apiKeys));
   }
 
-  function removeApiKey() {
-    state.apiKey = '';
-    localStorage.removeItem(STORAGE_KEYS.apiKey);
+  function removeApiKey(provider) {
+    delete state.apiKeys[provider];
+    localStorage.setItem(STORAGE_KEYS.apiKeys, JSON.stringify(state.apiKeys));
+  }
+
+  function saveProvider(provider) {
+    state.provider = provider;
+    localStorage.setItem(STORAGE_KEYS.provider, provider);
+  }
+
+  function getCurrentKey() {
+    return state.apiKeys[state.provider] || '';
   }
 
   function saveHistory() {
@@ -134,6 +197,40 @@
     dom.themeToggle.textContent = theme === 'dark' ? '🌙' : '☀️';
   }
 
+  // ─── Provider Selector ───
+  function setupProviderSelector() {
+    // Set active chip from saved provider
+    $$('.provider-chip').forEach(chip => {
+      chip.classList.toggle('active', chip.dataset.provider === state.provider);
+    });
+
+    // Update UI for current provider
+    updateProviderUI();
+
+    dom.providerChips.addEventListener('click', (e) => {
+      const chip = e.target.closest('.provider-chip');
+      if (!chip) return;
+
+      const provider = chip.dataset.provider;
+      $$('.provider-chip').forEach(c => c.classList.remove('active'));
+      chip.classList.add('active');
+
+      saveProvider(provider);
+      updateProviderUI();
+
+      // Load saved key for this provider into input
+      dom.apiKeyInput.value = getCurrentKey();
+      updateAPIStatus(!!getCurrentKey());
+    });
+  }
+
+  function updateProviderUI() {
+    const config = PROVIDERS[state.provider];
+    dom.apiKeyInput.placeholder = config.placeholder;
+    dom.apiHelpLink.href = config.helpUrl;
+    dom.apiHelpLink.textContent = config.helpText;
+  }
+
   // ─── API Key Section ───
   function setupAPISection() {
     // Toggle visibility
@@ -151,9 +248,10 @@
         dom.apiKeyInput.focus();
         return;
       }
-      saveApiKey(key);
+      saveApiKey(state.provider, key);
       updateAPIStatus(true);
-      showToast('✅ API key saved successfully', 'success');
+      const providerName = PROVIDERS[state.provider].name;
+      showToast(`✅ ${providerName} API key saved`, 'success');
       // Collapse after short delay
       setTimeout(() => {
         dom.apiBody.classList.add('collapsed');
@@ -162,7 +260,7 @@
 
     // Remove key
     dom.removeKeyBtn.addEventListener('click', () => {
-      removeApiKey();
+      removeApiKey(state.provider);
       dom.apiKeyInput.value = '';
       updateAPIStatus(false);
       dom.apiBody.classList.remove('collapsed');
@@ -176,8 +274,9 @@
     });
 
     // Restore state
-    if (state.apiKey) {
-      dom.apiKeyInput.value = state.apiKey;
+    const currentKey = getCurrentKey();
+    if (currentKey) {
+      dom.apiKeyInput.value = currentKey;
       updateAPIStatus(true);
       dom.apiBody.classList.add('collapsed');
     }
@@ -234,7 +333,7 @@
     });
 
     dom.topicInput.addEventListener('keydown', (e) => {
-      if (e.key === 'Enter' && !state.isGenerating && state.apiKey) {
+      if (e.key === 'Enter' && !state.isGenerating && getCurrentKey()) {
         generateArticles();
       }
     });
@@ -248,7 +347,8 @@
   }
 
   async function generateArticles() {
-    if (!state.apiKey) {
+    const apiKey = getCurrentKey();
+    if (!apiKey) {
       showToast('Please add your API key first', 'error');
       return;
     }
@@ -267,7 +367,7 @@
     showSkeletons(state.articleCount);
 
     try {
-      const articles = await callGeminiAPI(topic, state.articleCount);
+      const articles = await callAI(state.provider, apiKey, topic, state.articleCount);
       state.articles = articles;
       renderArticles(articles);
 
@@ -276,6 +376,7 @@
         state.history.unshift({
           ...article,
           savedAt: new Date().toISOString(),
+          provider: state.provider,
         });
       });
       // Keep max 50 in history
@@ -285,7 +386,7 @@
       saveHistory();
       updateHistoryBadge();
 
-      showToast(`✅ Generated ${articles.length} article${articles.length > 1 ? 's' : ''}`, 'success');
+      showToast(`✅ Generated ${articles.length} article${articles.length > 1 ? 's' : ''} via ${PROVIDERS[state.provider].name}`, 'success');
     } catch (err) {
       console.error('Generation error:', err);
       showErrorState(err.message);
@@ -297,17 +398,32 @@
     }
   }
 
-  // ─── Gemini API ───
-  async function callGeminiAPI(topic, count) {
+  // ─── Multi-Provider AI Calls ───
+  async function callAI(provider, apiKey, topic, count) {
     const prompt = buildPrompt(topic, count);
+    const config = PROVIDERS[provider];
 
-    const response = await fetch(`${GEMINI_API_URL}?key=${state.apiKey}`, {
+    let response;
+
+    if (provider === 'gemini') {
+      response = await callGemini(config, apiKey, prompt);
+    } else if (provider === 'cohere') {
+      response = await callCohere(config, apiKey, prompt);
+    } else {
+      // OpenAI-compatible: openai, openrouter, mistral
+      response = await callOpenAICompatible(config, apiKey, prompt);
+    }
+
+    return response;
+  }
+
+  // --- Gemini ---
+  async function callGemini(config, apiKey, prompt) {
+    const response = await fetch(`${config.url}?key=${apiKey}`, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({
-        contents: [{
-          parts: [{ text: prompt }]
-        }],
+        contents: [{ parts: [{ text: prompt }] }],
         generationConfig: {
           temperature: 0.9,
           topP: 0.95,
@@ -316,28 +432,89 @@
       })
     });
 
+    handleHTTPError(response);
+    const data = await response.json();
+    const text = data?.candidates?.[0]?.content?.parts?.[0]?.text;
+    if (!text) throw new Error('No content received from Gemini. Please try again.');
+    return parseArticles(text);
+  }
+
+  // --- OpenAI-compatible (OpenAI, OpenRouter, Mistral) ---
+  async function callOpenAICompatible(config, apiKey, prompt) {
+    const headers = {
+      'Content-Type': 'application/json',
+      'Authorization': `Bearer ${apiKey}`,
+    };
+    // OpenRouter recommends these headers
+    if (config === PROVIDERS.openrouter) {
+      headers['HTTP-Referer'] = window.location.href;
+      headers['X-Title'] = 'Black News';
+    }
+
+    const response = await fetch(config.url, {
+      method: 'POST',
+      headers,
+      body: JSON.stringify({
+        model: config.model,
+        messages: [
+          { role: 'system', content: 'You are a professional news journalist. Always respond with valid JSON only, no markdown or extra text.' },
+          { role: 'user', content: prompt }
+        ],
+        temperature: 0.9,
+        max_tokens: 8192,
+      })
+    });
+
+    handleHTTPError(response);
+    const data = await response.json();
+    const text = data?.choices?.[0]?.message?.content;
+    if (!text) throw new Error(`No content received from ${config.name}. Please try again.`);
+    return parseArticles(text);
+  }
+
+  // --- Cohere ---
+  async function callCohere(config, apiKey, prompt) {
+    const response = await fetch(config.url, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        'Authorization': `Bearer ${apiKey}`,
+      },
+      body: JSON.stringify({
+        model: config.model,
+        messages: [
+          { role: 'system', content: 'You are a professional news journalist. Always respond with valid JSON only, no markdown or extra text.' },
+          { role: 'user', content: prompt }
+        ],
+        temperature: 0.9,
+        max_tokens: 8192,
+      })
+    });
+
+    handleHTTPError(response);
+    const data = await response.json();
+    const text = data?.message?.content?.[0]?.text;
+    if (!text) throw new Error('No content received from Cohere. Please try again.');
+    return parseArticles(text);
+  }
+
+  // --- Error Handling ---
+  async function handleHTTPError(response) {
     if (!response.ok) {
       const errData = await response.json().catch(() => ({}));
-      if (response.status === 400) {
+      if (response.status === 400 || response.status === 401) {
         throw new Error('Invalid API key. Please check your key and try again.');
       } else if (response.status === 429) {
         throw new Error('Rate limit exceeded. Please wait a moment and try again.');
       } else if (response.status === 403) {
-        throw new Error('API key does not have permission. Enable the Generative Language API.');
+        throw new Error('API key does not have permission. Check your API dashboard.');
       }
-      throw new Error(errData?.error?.message || `API request failed (${response.status})`);
+      const msg = errData?.error?.message || errData?.message || `API request failed (${response.status})`;
+      throw new Error(msg);
     }
-
-    const data = await response.json();
-    const text = data?.candidates?.[0]?.content?.parts?.[0]?.text;
-
-    if (!text) {
-      throw new Error('No content received from the AI. Please try again.');
-    }
-
-    return parseArticles(text, topic);
   }
 
+  // ─── Prompt Builder ───
   function buildPrompt(topic, count) {
     const isCategory = CATEGORIES.includes(topic.toLowerCase());
     const topicLabel = isCategory
@@ -368,10 +545,9 @@ Important rules:
 - Reading time should be between 2-7 minutes based on body length`;
   }
 
-  function parseArticles(text, topic) {
-    // Try to extract JSON from the response
+  // ─── Article Parser ───
+  function parseArticles(text) {
     let cleaned = text.trim();
-
     // Remove markdown code fences if present
     cleaned = cleaned.replace(/^```(?:json)?\s*/i, '').replace(/\s*```$/i, '');
     cleaned = cleaned.trim();
@@ -379,52 +555,45 @@ Important rules:
     try {
       const articles = JSON.parse(cleaned);
       if (Array.isArray(articles) && articles.length > 0) {
-        return articles.map(a => ({
-          headline: a.headline || 'Untitled Article',
-          summary: a.summary || '',
-          body: a.body || '',
-          source: a.source || 'AI News Service',
-          category: a.category || topic,
-          readingTime: a.readingTime || 3,
-          id: generateId(),
-          generatedAt: new Date().toISOString(),
-        }));
+        return articles.map(normalizeArticle);
       }
     } catch (e) {
-      // Try to find JSON array in the text
+      // Try to extract JSON array from text
       const jsonMatch = cleaned.match(/\[[\s\S]*\]/);
       if (jsonMatch) {
         try {
           const articles = JSON.parse(jsonMatch[0]);
           if (Array.isArray(articles)) {
-            return articles.map(a => ({
-              headline: a.headline || 'Untitled Article',
-              summary: a.summary || '',
-              body: a.body || '',
-              source: a.source || 'AI News Service',
-              category: a.category || topic,
-              readingTime: a.readingTime || 3,
-              id: generateId(),
-              generatedAt: new Date().toISOString(),
-            }));
+            return articles.map(normalizeArticle);
           }
-        } catch (e2) {
-          // Fall through
-        }
+        } catch (e2) { /* fall through */ }
       }
     }
 
-    // Fallback: create a single article from the raw text
+    // Fallback: wrap raw text into single article
     return [{
-      headline: `News on ${topic}`,
+      headline: 'Generated News',
       summary: cleaned.substring(0, 200),
       body: cleaned,
       source: 'AI News Service',
-      category: topic,
+      category: 'custom',
       readingTime: Math.ceil(cleaned.split(/\s+/).length / 200),
       id: generateId(),
       generatedAt: new Date().toISOString(),
     }];
+  }
+
+  function normalizeArticle(a) {
+    return {
+      headline: a.headline || 'Untitled Article',
+      summary: a.summary || '',
+      body: a.body || '',
+      source: a.source || 'AI News Service',
+      category: a.category || 'custom',
+      readingTime: a.readingTime || 3,
+      id: generateId(),
+      generatedAt: new Date().toISOString(),
+    };
   }
 
   // ─── Rendering ───
@@ -526,7 +695,6 @@ Important rules:
     const text = `${article.headline}\n\n${article.summary}\n\n${article.body}\n\nSource: ${article.source}`;
     navigator.clipboard.writeText(text).then(() => {
       showToast('📋 Article copied to clipboard', 'success');
-      // Visual feedback
       const btn = document.querySelector(`[data-id="${id}"] .article-btn:nth-child(2)`);
       if (btn) {
         btn.classList.add('copied');
@@ -551,7 +719,7 @@ Important rules:
       navigator.share({
         title: article.headline,
         text: text,
-      }).catch(() => {});
+      }).catch(() => { });
     } else {
       navigator.clipboard.writeText(text).then(() => {
         showToast('🔗 Article text copied for sharing', 'success');
@@ -561,7 +729,7 @@ Important rules:
 
   function findArticleById(id) {
     return state.articles.find(a => a.id === id) ||
-           state.history.find(a => a.id === id);
+      state.history.find(a => a.id === id);
   }
 
   // ─── History ───
@@ -612,12 +780,14 @@ Important rules:
         ? `badge-${article.category}`
         : 'badge-custom';
 
+      const providerLabel = article.provider ? ` · ${PROVIDERS[article.provider]?.name || article.provider}` : '';
+
       html += `
         <div class="history-item" onclick="BlackNews.viewHistoryArticle('${article.id}')">
           <div class="history-item-title">${escapeHtml(article.headline)}</div>
           <div class="history-item-meta">
             <span class="article-category-badge ${badgeClass}" style="font-size:0.65rem; padding:2px 8px;">${escapeHtml(article.category)}</span>
-            <span>${date}</span>
+            <span>${date}${providerLabel}</span>
           </div>
         </div>`;
     });
@@ -630,7 +800,6 @@ Important rules:
       state.articles = [article];
       renderArticles([article]);
       closeHistory();
-      // Scroll to results
       dom.articlesContainer.scrollIntoView({ behavior: 'smooth', block: 'start' });
     }
   }
@@ -663,12 +832,10 @@ Important rules:
   // ─── Keyboard Shortcuts ───
   function setupKeyboardShortcuts() {
     document.addEventListener('keydown', (e) => {
-      // Ctrl/Cmd + Enter to generate
-      if ((e.ctrlKey || e.metaKey) && e.key === 'Enter' && !state.isGenerating && state.apiKey) {
+      if ((e.ctrlKey || e.metaKey) && e.key === 'Enter' && !state.isGenerating && getCurrentKey()) {
         e.preventDefault();
         generateArticles();
       }
-      // Escape to close history
       if (e.key === 'Escape') {
         closeHistory();
       }
@@ -687,7 +854,7 @@ Important rules:
     return div.innerHTML;
   }
 
-  // ─── Public API (for inline event handlers) ───
+  // ─── Public API ───
   window.BlackNews = {
     toggleBody,
     copyArticle,

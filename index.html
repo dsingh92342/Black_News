@@ -4,11 +4,11 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Black News — AI-Powered News Generator</title>
-  <meta name="description" content="Generate high-quality, AI-powered news articles on any topic using Google Gemini. Paste your API key and get instant news." />
-  <meta name="keywords" content="AI news, news generator, Gemini AI, artificial intelligence, news articles" />
+  <meta name="description" content="Generate high-quality, AI-powered news articles on any topic. Supports Google Gemini, OpenAI, OpenRouter, Cohere, and Mistral. Paste your API key and get instant news." />
+  <meta name="keywords" content="AI news, news generator, Gemini AI, OpenAI, GPT, artificial intelligence, news articles" />
   <meta name="author" content="Black News" />
   <meta property="og:title" content="Black News — AI-Powered News Generator" />
-  <meta property="og:description" content="Generate high-quality, AI-powered news articles on any topic using Google Gemini." />
+  <meta property="og:description" content="Generate high-quality, AI-powered news articles on any topic. Supports multiple AI providers." />
   <meta property="og:type" content="website" />
   <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>📰</text></svg>" />
   <link rel="stylesheet" href="style.css" />
@@ -43,7 +43,7 @@
         AI-Powered <span style="background: var(--accent-gradient); -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text;">News Generator</span>
       </h1>
       <p style="color: var(--text-secondary); font-size: 1.05rem; max-width: 540px; margin: 0 auto;">
-        Generate professional news articles on any topic instantly. Powered by Google Gemini AI.
+        Generate professional news articles on any topic instantly. Choose your AI provider.
       </p>
     </section>
 
@@ -54,7 +54,7 @@
           <div class="api-icon">🔑</div>
           <div>
             <div class="api-title">API Configuration</div>
-            <div class="api-subtitle">Connect your Google Gemini API key</div>
+            <div class="api-subtitle">Choose your AI provider and connect your key</div>
           </div>
         </div>
         <div class="api-status disconnected" id="apiStatus">
@@ -64,13 +64,33 @@
       </div>
 
       <div class="api-body" id="apiBody">
-        <div class="api-input-group">
+        <div class="provider-selector">
+          <p class="section-title" style="margin-bottom: 10px;">Select Provider</p>
+          <div class="provider-chips" id="providerChips">
+            <button class="provider-chip active" data-provider="gemini">
+              <span class="chip-icon">✦</span> Google Gemini
+            </button>
+            <button class="provider-chip" data-provider="openai">
+              <span class="chip-icon">◐</span> OpenAI
+            </button>
+            <button class="provider-chip" data-provider="openrouter">
+              <span class="chip-icon">⬡</span> OpenRouter
+            </button>
+            <button class="provider-chip" data-provider="cohere">
+              <span class="chip-icon">◈</span> Cohere
+            </button>
+            <button class="provider-chip" data-provider="mistral">
+              <span class="chip-icon">▣</span> Mistral
+            </button>
+          </div>
+        </div>
+        <div class="api-input-group" style="margin-top: 16px;">
           <div class="api-input-wrapper">
             <input
               type="password"
               class="api-input"
               id="apiKeyInput"
-              placeholder="Paste your Gemini API key here..."
+              placeholder="Paste your API key here..."
               autocomplete="off"
               spellcheck="false"
             />
@@ -79,8 +99,8 @@
           <button class="btn-primary" id="saveKeyBtn">Save Key</button>
           <button class="btn-danger hidden" id="removeKeyBtn">Remove</button>
         </div>
-        <p class="api-help">
-          💡 Get your free API key at <a href="https://aistudio.google.com/apikey" target="_blank" rel="noopener noreferrer">aistudio.google.com</a>
+        <p class="api-help" id="apiHelp">
+          💡 Get your free API key at <a href="https://aistudio.google.com/apikey" target="_blank" rel="noopener noreferrer" id="apiHelpLink">aistudio.google.com</a>
           — your key is stored locally and never shared.
         </p>
       </div>
@@ -184,7 +204,7 @@
 
   <!-- ===== FOOTER ===== -->
   <footer class="footer">
-    <p>Built with ❤️ and Google Gemini AI &nbsp;·&nbsp; <a href="https://github.com" target="_blank">View on GitHub</a></p>
+    <p>Built with ❤️ and AI &nbsp;·&nbsp; Supports Gemini, OpenAI, OpenRouter, Cohere & Mistral &nbsp;·&nbsp; <a href="https://github.com" target="_blank">View on GitHub</a></p>
     <p style="margin-top: 6px; font-size: 0.75rem; color: var(--text-muted);">Your API key never leaves your browser. 100% client-side.</p>
   </footer>
 
