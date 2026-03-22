@@ -257,6 +257,12 @@
       dom.toggleKeyVisibility.textContent = input.type === 'password' ? '👁️' : '🙈';
     });
 
+    // Key input detection
+    dom.apiKeyInput.addEventListener('input', (e) => {
+      const hasKey = e.target.value.trim().length > 0;
+      dom.generateBtn.disabled = !hasKey;
+    });
+
     // Save key
     dom.saveKeyBtn.addEventListener('click', () => {
       const key = dom.apiKeyInput.value.trim();
@@ -390,9 +396,20 @@
   }
 
   async function generateArticles() {
-    const apiKey = getCurrentKey();
+    let apiKey = getCurrentKey();
+    const inputKey = dom.apiKeyInput.value.trim();
+
+    // If input has a key but state doesn't, auto-save and use it
+    if (inputKey && inputKey !== apiKey) {
+      apiKey = inputKey;
+      saveApiKey(state.provider, inputKey);
+      updateAPIStatus(true);
+    }
+
     if (!apiKey) {
-      showToast('Please add your API key first', 'error');
+      showToast('Please enter an API key first', 'error');
+      dom.apiBody.classList.remove('collapsed');
+      dom.apiKeyInput.focus();
       return;
     }
 
@@ -546,7 +563,9 @@
   // --- Error Handling ---
   async function handleHTTPError(response) {
     if (!response.ok) {
-      const errData = await response.json().catch(() => ({}));
+      // Use clone to avoid 'body stream already read' if handled elsewhere
+      const clone = response.clone();
+      const errData = await clone.json().catch(() => ({}));
       if (response.status === 400 || response.status === 401) {
         throw new Error('Invalid API key. Please check your key and try again.');
       } else if (response.status === 429) {
@@ -895,7 +914,7 @@ ${JSON.stringify({
           card.querySelector('.article-headline').textContent = translated.headline;
           card.querySelector('.article-summary').textContent = translated.summary;
           card.querySelector('.article-body').innerHTML = formatBody(translated.body);
-          card.querySelector('.article-source').textContent = `📌 Source: ${translated.source} (Translated)`;
+          card.querySelector('.article-source').textContent = `SOURCE: ${translated.source.toUpperCase()} (TRANSLATED)`;
           showToast(`✅ Translated to ${targetLang}`, 'success');
         }
       }
