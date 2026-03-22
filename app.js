@@ -316,10 +316,10 @@
   // ─── Categories ───
   function setupCategories() {
     dom.categories.addEventListener('click', (e) => {
-      const chip = e.target.closest('.category-chip');
+      const chip = e.target.closest('.pill-chip');
       if (!chip) return;
 
-      $$('.category-chip').forEach(c => c.classList.remove('active'));
+      $$('#categories .pill-chip').forEach(c => c.classList.remove('active'));
       chip.classList.add('active');
       state.selectedCategory = chip.dataset.category;
 
@@ -345,7 +345,7 @@
     dom.topicInput.addEventListener('input', (e) => {
       state.customTopic = e.target.value.trim();
       if (state.customTopic) {
-        $$('.category-chip').forEach(c => c.classList.remove('active'));
+        $$('#categories .pill-chip').forEach(c => c.classList.remove('active'));
       }
     });
 
@@ -359,10 +359,10 @@
   // ─── Tone Selector ───
   function setupToneSelector() {
     dom.toneSelector.addEventListener('click', (e) => {
-      const chip = e.target.closest('.tone-chip');
+      const chip = e.target.closest('.pill-chip');
       if (!chip) return;
 
-      $$('.tone-chip').forEach(c => c.classList.remove('active'));
+      $$('#toneSelector .pill-chip').forEach(c => c.classList.remove('active'));
       chip.classList.add('active');
       state.selectedTone = chip.dataset.tone;
     });
@@ -371,10 +371,10 @@
   // ─── Length Selector ───
   function setupLengthSelector() {
     dom.lengthSelector.addEventListener('click', (e) => {
-      const chip = e.target.closest('.length-chip');
+      const chip = e.target.closest('.pill-chip');
       if (!chip) return;
 
-      $$('.length-chip').forEach(c => c.classList.remove('active'));
+      $$('#lengthSelector .pill-chip').forEach(c => c.classList.remove('active'));
       chip.classList.add('active');
       state.selectedLength = chip.dataset.length;
     });
@@ -685,45 +685,39 @@ Important rules:
       });
 
       html += `
-        <article class="article-card" style="animation-delay: ${index * 0.15}s" data-id="${article.id}">
-          <div class="article-meta">
-            <span class="article-category-badge ${badgeClass}">${escapeHtml(article.category)}</span>
-            <span class="article-reading-time">📖 ${article.readingTime} min read</span>
-            <span class="article-date">${date}</span>
+        <article class="card article-card" style="animation-delay: ${index * 0.15}s" data-id="${article.id}">
+          <div class="article-meta" style="display:flex; gap:12px; margin-bottom:20px; font-size:0.8rem; color:var(--text-muted); font-weight:700;">
+            <span class="article-category-badge ${badgeClass}" style="padding:4px 12px; border-radius:100px; color:var(--text-main); background:var(--bg-glass-heavy);">${escapeHtml(article.category).toUpperCase()}</span>
+            <span>⏱️ ${article.readingTime} MIN READ</span>
           </div>
-          <h2 class="article-headline">${escapeHtml(article.headline)}</h2>
-          <p class="article-summary">${escapeHtml(article.summary)}</p>
-          <div class="article-body" id="body-${article.id}">
+          <h2 class="article-headline" style="font-family:var(--font-display); font-size:1.8rem; line-height:1.2; margin-bottom:16px;">${escapeHtml(article.headline)}</h2>
+          <p class="article-summary" style="color:var(--text-dim); margin-bottom:24px;">${escapeHtml(article.summary)}</p>
+          <div class="article-body" id="body-${article.id}" style="display:none; border-top:1px solid var(--border-glass); padding-top:20px; margin-top:20px;">
             ${formatBody(article.body)}
           </div>
-          <div class="article-source">📌 Source: ${escapeHtml(article.source)}</div>
-          <div class="article-actions">
-            <button class="article-btn" onclick="BlackNews.toggleBody('${article.id}')">
-              📖 <span id="toggle-text-${article.id}">Read Full Article</span>
+          <div class="article-actions" style="display:flex; gap:10px; margin-top:24px; flex-wrap:wrap;">
+            <button class="action-btn" onclick="BlackNews.toggleBody('${article.id}')">
+              📖 <span id="toggle-text-${article.id}">Full Article</span>
             </button>
-            <button class="article-btn" id="listen-btn-${article.id}" onclick="BlackNews.speakArticle('${article.id}')">
+            <button class="action-btn" id="listen-btn-${article.id}" onclick="BlackNews.speakArticle('${article.id}')">
               🔊 Listen
             </button>
-            <button class="article-btn" onclick="BlackNews.copyArticle('${article.id}')">
-              📋 Copy
-            </button>
-            <div class="article-translate-group">
-              <button class="article-btn" id="translate-btn-${article.id}" onclick="BlackNews.translateArticle('${article.id}')">
+            <div class="article-translate-group" style="display:flex; align-items:center; gap:4px;">
+              <button class="action-btn" id="translate-btn-${article.id}" onclick="BlackNews.translateArticle('${article.id}')">
                 🌐 Translate
               </button>
-              <select class="lang-select" id="lang-select-${article.id}" onchange="BlackNews.translateArticle('${article.id}')">
+              <select class="lang-select" id="lang-select-${article.id}" style="padding:8px; border-radius:8px; background:var(--bg-glass); color:var(--text-dim); border:1px solid var(--border-glass); font-size:0.75rem;">
                 <option value="Hindi">Hindi</option>
                 <option value="Spanish">Spanish</option>
                 <option value="French">French</option>
                 <option value="German">German</option>
-                <option value="Japanese">Japanese</option>
-                <option value="Chinese">Chinese</option>
-                <option value="Arabic">Arabic</option>
               </select>
             </div>
-            <button class="article-btn" onclick="BlackNews.shareArticle('${article.id}')">
-              🔗 Share
-            </button>
+            <button class="action-btn" onclick="BlackNews.copyArticle('${article.id}')">📋 Copy</button>
+            <button class="action-btn" onclick="BlackNews.shareArticle('${article.id}')">🔗 Share</button>
+          </div>
+          <div style="margin-top:20px; font-size:0.75rem; color:var(--text-muted); font-weight:600;">
+            SOURCE: ${escapeHtml(article.source).toUpperCase()} · ${date}
           </div>
         </article>`;
     });
@@ -751,8 +745,9 @@ Important rules:
     const bodyEl = document.getElementById(`body-${id}`);
     const toggleText = document.getElementById(`toggle-text-${id}`);
     if (bodyEl) {
-      bodyEl.classList.toggle('expanded');
-      toggleText.textContent = bodyEl.classList.contains('expanded') ? 'Collapse' : 'Read Full Article';
+      const isExpanded = bodyEl.classList.toggle('expanded');
+      toggleText.textContent = isExpanded ? 'Collapse' : 'Full Article';
+      bodyEl.style.display = isExpanded ? 'block' : 'none';
     }
   }
 

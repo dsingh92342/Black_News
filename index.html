@@ -1,181 +1,123 @@
 <!DOCTYPE html>
 <html lang="en" data-theme="dark">
-
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Black News — AI-Powered News Generator</title>
-  <meta name="description"
-    content="Generate high-quality, AI-powered news articles on any topic. Supports Google Gemini, OpenAI, OpenRouter, Cohere, and Mistral. Paste your API key and get instant news." />
-  <meta name="keywords"
-    content="AI news, news generator, Gemini AI, OpenAI, GPT, artificial intelligence, news articles" />
-  <meta name="author" content="Black News" />
-  <meta property="og:title" content="Black News — AI-Powered News Generator" />
-  <meta property="og:description"
-    content="Generate high-quality, AI-powered news articles on any topic. Supports multiple AI providers." />
-  <meta property="og:type" content="website" />
-  <link rel="icon"
-    href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>📰</text></svg>" />
+  <title>Black News — Premium AI Generator</title>
+  <meta name="description" content="Generate high-quality, AI-powered news articles on any topic instantly." />
+  <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>⚡</text></svg>" />
   <link rel="manifest" href="manifest.json" />
   <meta name="theme-color" content="#6c5ce7" />
   <link rel="stylesheet" href="style.css" />
 </head>
-
 <body>
 
   <!-- ===== HEADER ===== -->
   <header class="header">
     <div class="header-inner">
-      <a href="#" class="logo" id="logo">
-        <div class="logo-icon">⚡</div>
-        <div class="logo-text">Black<span>News</span></div>
+      <a href="#" class="logo">
+        ⚡ Black<span>News</span>
       </a>
       <div class="header-actions">
-        <button class="icon-btn" id="themeToggle" title="Toggle Theme" aria-label="Toggle theme">
-          🌙
-        </button>
-        <button class="icon-btn" id="historyToggle" title="Article History" aria-label="Open history">
-          📋
-          <span class="badge hidden" id="historyBadge">0</span>
+        <button class="icon-btn" id="themeToggle" title="Toggle Theme">🌙</button>
+        <button class="icon-btn" id="historyToggle" title="Article History">
+          📋 <span class="badge hidden" id="historyBadge">0</span>
         </button>
       </div>
     </div>
   </header>
 
-  <!-- ===== MAIN ===== -->
   <main class="main">
-
-    <!-- Hero / Intro -->
-    <section style="text-align:center; margin-bottom: 40px; padding-top: 16px;">
-      <h1
-        style="font-family: var(--font-serif); font-size: 2.4rem; font-weight: 900; line-height: 1.2; margin-bottom: 12px;">
-        AI-Powered <span
-          style="background: var(--accent-gradient); -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text;">News
-          Generator</span>
+    
+    <!-- Hero -->
+    <section class="hero" style="text-align:center; padding-bottom: 40px;">
+      <h1 style="font-family: var(--font-display); font-size: 3.5rem; font-weight: 900; margin-bottom: 12px; line-height: 1.1;">
+        The Future of <span style="background: var(--brand-gradient); -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text;">Intelligence</span>
       </h1>
-      <p style="color: var(--text-secondary); font-size: 1.05rem; max-width: 540px; margin: 0 auto;">
-        Generate professional news articles on any topic instantly. Choose your AI provider.
+      <p style="color: var(--text-dim); font-size: 1.2rem; max-width: 600px; margin: 0 auto;">
+        Experience AI-powered journalism on demand. Instant, accurate, and multi-lingual.
       </p>
     </section>
 
-    <!-- API Key Section -->
-    <section class="api-section" id="apiSection">
+    <!-- API CONFIG -->
+    <section class="card api-section" id="apiSection">
       <div class="api-header" id="apiHeader">
-        <div class="api-header-left">
-          <div class="api-icon">🔑</div>
-          <div>
-            <div class="api-title">API Configuration</div>
-            <div class="api-subtitle">Choose your AI provider and connect your key</div>
+        <div>
+          <h2 class="section-title">1. Engine Configuration</h2>
+          <div class="api-status disconnected" id="apiStatus">
+            <span class="status-dot"></span> <span id="apiStatusText">Ready to connect</span>
           </div>
         </div>
-        <div class="api-status disconnected" id="apiStatus">
-          <span class="status-dot"></span>
-          <span id="apiStatusText">Not Connected</span>
-        </div>
+        <div style="font-size: 1.5rem;">🔌</div>
       </div>
 
       <div class="api-body" id="apiBody">
-        <div class="provider-selector">
-          <p class="section-title" style="margin-bottom: 10px;">Select Provider</p>
-          <div class="provider-chips" id="providerChips">
-            <button class="provider-chip active" data-provider="gemini">
-              <span class="chip-icon">✦</span> Google Gemini
-            </button>
-            <button class="provider-chip" data-provider="openai">
-              <span class="chip-icon">◐</span> OpenAI
-            </button>
-            <button class="provider-chip" data-provider="openrouter">
-              <span class="chip-icon">⬡</span> OpenRouter
-            </button>
-            <button class="provider-chip" data-provider="cohere">
-              <span class="chip-icon">◈</span> Cohere
-            </button>
-            <button class="provider-chip" data-provider="mistral">
-              <span class="chip-icon">▣</span> Mistral
-            </button>
-          </div>
+        <div class="provider-chips" id="providerChips">
+          <button class="provider-chip active" data-provider="gemini">✦ Gemini</button>
+          <button class="provider-chip" data-provider="openai">◐ OpenAI</button>
+          <button class="provider-chip" data-provider="openrouter">⬡ Router</button>
+          <button class="provider-chip" data-provider="cohere">◈ Cohere</button>
+          <button class="provider-chip" data-provider="mistral">▣ Mistral</button>
         </div>
-        <div class="api-input-group" style="margin-top: 16px;">
-          <div class="api-input-wrapper">
-            <input type="password" class="api-input" id="apiKeyInput" placeholder="Paste your API key here..."
-              autocomplete="off" spellcheck="false" />
-            <button class="toggle-visibility" id="toggleKeyVisibility" title="Show/Hide key"
-              aria-label="Toggle key visibility">👁️</button>
+        
+        <div class="api-input-group" style="margin-top: 24px; display: flex; gap: 12px;">
+          <div style="flex: 1; position: relative;">
+            <input type="password" class="topic-input" id="apiKeyInput" placeholder="Enter API Key..." style="margin-top:0; font-size: 0.9rem;" />
+            <button class="toggle-visibility" id="toggleKeyVisibility" style="position:absolute; right:15px; top:50%; transform:translateY(-50%); background:none; border:none; cursor:pointer; color:var(--text-muted);">👁️</button>
           </div>
-          <button class="btn-primary" id="saveKeyBtn">Save Key</button>
-          <button class="btn-danger hidden" id="removeKeyBtn">Remove</button>
+          <button class="btn-generate" id="saveKeyBtn" style="padding: 12px 24px; font-size: 0.9rem; border-radius:12px;">Save</button>
         </div>
-        <p class="api-help" id="apiHelp">
-          💡 Get your free API key at <a href="https://aistudio.google.com/apikey" target="_blank"
-            rel="noopener noreferrer" id="apiHelpLink">aistudio.google.com</a>
-          — your key is stored locally and never shared.
+        
+        <p class="api-help" id="apiHelp" style="margin-top: 12px; font-size: 0.8rem; color: var(--text-muted);">
+          Key is stored locally & never shared. Get it at: <a href="#" id="apiHelpLink" target="_blank" style="color:var(--text-main); font-weight:600;">aistudio.google.com</a>
         </p>
       </div>
     </section>
 
-    <!-- Generator Section -->
-    <section class="generator" id="generatorSection">
-      <div class="generator-controls">
-        <p class="section-title">Choose a Category</p>
-        <div class="categories" id="categories">
-          <button class="category-chip active" data-category="technology">
-            <span class="chip-icon">💻</span> Technology
-          </button>
-          <button class="category-chip" data-category="business">
-            <span class="chip-icon">📈</span> Business
-          </button>
-          <button class="category-chip" data-category="science">
-            <span class="chip-icon">🔬</span> Science
-          </button>
-          <button class="category-chip" data-category="health">
-            <span class="chip-icon">🏥</span> Health
-          </button>
-          <button class="category-chip" data-category="sports">
-            <span class="chip-icon">⚽</span> Sports
-          </button>
-          <button class="category-chip" data-category="entertainment">
-            <span class="chip-icon">🎬</span> Entertainment
-          </button>
-          <button class="category-chip" data-category="politics">
-            <span class="chip-icon">🏛️</span> Politics
-          </button>
-          <button class="category-chip" data-category="world">
-            <span class="chip-icon">🌍</span> World
-          </button>
+    <!-- GENERATOR -->
+    <section id="generatorSection">
+      <div class="card">
+        <h2 class="section-title">2. Topic & Category</h2>
+        <div class="chip-group" id="categories" style="margin-bottom: 24px;">
+          <button class="pill-chip active" data-category="technology">Technology</button>
+          <button class="pill-chip" data-category="business">Business</button>
+          <button class="pill-chip" data-category="science">Science</button>
+          <button class="pill-chip" data-category="health">Health</button>
+          <button class="pill-chip" data-category="sports">Sports</button>
+          <button class="pill-chip" data-category="entertainment">Entertainment</button>
+          <button class="pill-chip" data-category="politics">Politics</button>
+          <button class="pill-chip" data-category="world">World</button>
         </div>
 
-        <div class="topic-group">
-          <p class="section-title">Or enter a custom topic</p>
-          <input type="text" class="topic-input" id="topicInput"
-            placeholder="e.g., Artificial Intelligence in Healthcare, Space Exploration 2026..." />
-        </div>
-
-        <!-- Tone Selector -->
         <div class="control-group">
-          <label class="control-label">🎭 Article Tone</label>
-          <div class="tone-selector" id="toneSelector">
-            <button class="tone-chip active" data-tone="Serious">Serious</button>
-            <button class="tone-chip" data-tone="Professional">Professional</button>
-            <button class="tone-chip" data-tone="Funny">Funny</button>
-            <button class="tone-chip" data-tone="Sarcastic">Sarcastic</button>
-            <button class="tone-chip" data-tone="Breaking News">Breaking</button>
-            <button class="tone-chip" data-tone="Exaggerated">Exaggerated</button>
+          <label style="font-size: 0.8rem; color: var(--text-muted); font-weight: 700; margin-bottom: 8px; display: block;">CUSTOM TOPIC</label>
+          <input type="text" class="topic-input" id="topicInput" placeholder="e.g., The impact of Quantum Computing on security..." />
+        </div>
+
+        <h2 class="section-title" style="margin-top:32px;">3. Style & Format</h2>
+        <div style="display:grid; grid-template-columns: 1fr 1fr; gap: 24px;">
+          <div class="control-group">
+            <label style="font-size: 0.8rem; color: var(--text-muted); font-weight: 700; margin-bottom: 12px; display: block;">NARRATIVE TONE</label>
+            <div class="chip-group" id="toneSelector">
+              <button class="pill-chip active" data-tone="Serious">Serious</button>
+              <button class="pill-chip" data-tone="Funny">Funny</button>
+              <button class="pill-chip" data-tone="Breaking News">Breaking</button>
+              <button class="pill-chip" data-tone="Sarcastic">Sarcastic</button>
+            </div>
           </div>
-        </div>
-
-        <!-- Length Selector -->
-        <div class="control-group">
-          <label class="control-label">📏 Article Length</label>
-          <div class="length-selector" id="lengthSelector">
-            <button class="length-chip" data-length="Short">Short</button>
-            <button class="length-chip active" data-length="Medium">Medium</button>
-            <button class="length-chip" data-length="Long">Long</button>
+          <div class="control-group">
+            <label style="font-size: 0.8rem; color: var(--text-muted); font-weight: 700; margin-bottom: 12px; display: block;">ARTICLE LENGTH</label>
+            <div class="chip-group" id="lengthSelector">
+              <button class="pill-chip" data-length="Short">Short</button>
+              <button class="pill-chip active" data-length="Medium">Medium</button>
+              <button class="pill-chip" data-length="Long">Long</button>
+            </div>
           </div>
         </div>
 
         <div class="generate-row">
-          <div class="article-count">
-            <label>Articles:</label>
+          <div style="display:flex; align-items:center; gap: 16px;">
+            <span style="font-size: 0.9rem; font-weight: 700;">Quantity:</span>
             <div class="count-selector" id="countSelector">
               <button class="count-btn" data-count="1">1</button>
               <button class="count-btn" data-count="2">2</button>
@@ -185,60 +127,49 @@
             </div>
           </div>
           <button class="btn-generate" id="generateBtn" disabled>
-            <span class="btn-text">⚡ Generate News</span>
+            <span class="btn-text">⚡ Generate Intelligence</span>
             <span class="spinner"></span>
           </button>
         </div>
       </div>
     </section>
 
-    <!-- Results Section -->
+    <!-- RESULTS -->
     <section class="results" id="resultsSection">
-      <div class="results-header hidden" id="resultsHeader">
-        <h2 class="section-title" style="margin-bottom:0;">Generated Articles</h2>
-        <span class="results-count" id="resultsCount"></span>
+      <div class="results-header hidden" id="resultsHeader" style="margin-bottom: 24px;">
+        <h2 class="section-title" style="margin-bottom:0;">Live Feed</h2>
+        <span class="results-count" id="resultsCount" style="font-size: 0.85rem; color: var(--text-muted);"></span>
       </div>
       <div id="articlesContainer">
-        <!-- Empty state by default -->
-        <div class="empty-state" id="emptyState">
-          <div class="empty-icon">📰</div>
-          <div class="empty-title">No articles yet</div>
-          <div class="empty-subtitle">Select a category or enter a topic above, then hit Generate to create AI-powered
-            news articles.</div>
+        <div class="empty-state" id="emptyState" style="text-align:center; padding: 60px 0;">
+          <div style="font-size: 4rem; opacity: 0.2;">📰</div>
+          <h3 style="margin-top: 16px; color: var(--text-dim);">Awaiting Input</h3>
+          <p style="color: var(--text-muted); font-size: 0.9rem;">Configure your API engine and select a topic to begin.</p>
         </div>
       </div>
     </section>
 
   </main>
 
-  <!-- ===== HISTORY SIDEBAR ===== -->
-  <div class="history-overlay" id="historyOverlay"></div>
-  <aside class="history-panel" id="historyPanel">
-    <div class="history-header">
-      <span class="history-title">📋 Article History</span>
-      <button class="icon-btn" id="closeHistory" aria-label="Close history">✕</button>
+  <!-- HISTORY -->
+  <div class="history-overlay" id="historyOverlay" style="position:fixed; inset:0; background:rgba(0,0,0,0.8); z-index:1001; opacity:0; pointer-events:none; transition:opacity 0.3s ease;"></div>
+  <aside class="history-panel" id="historyPanel" style="position:fixed; right:-400px; top:0; width:400px; height:100vh; background:var(--bg-surface); z-index:1002; transition:right 0.4s cubic-bezier(0.23, 1, 0.32, 1); border-left:1px solid var(--border-glass); padding:32px;">
+    <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:32px;">
+      <h2 style="font-family:var(--font-display); font-size:1.5rem;">History Archive</h2>
+      <button class="icon-btn" id="closeHistory">✕</button>
     </div>
-    <div class="history-body" id="historyBody">
-      <div class="history-empty" id="historyEmpty">No saved articles yet.</div>
-    </div>
-    <div class="history-footer">
-      <button class="btn-danger" id="clearHistoryBtn"
-        style="width:100%; text-align:center; justify-content: center; display:flex;">Clear All History</button>
+    <div id="historyBody" style="overflow-y:auto; height:calc(100% - 150px);"></div>
+    <div style="margin-top:24px;">
+      <button class="btn-generate" id="clearHistoryBtn" style="width:100%; font-size:0.9rem; padding:12px; background:rgba(239,68,68,0.1); color:#ef4444; border:1px solid rgba(239,68,68,0.2); box-shadow:none;">Clear Archive</button>
     </div>
   </aside>
 
-  <!-- ===== TOAST CONTAINER ===== -->
-  <div class="toast-container" id="toastContainer"></div>
+  <div id="toastContainer" style="position:fixed; bottom:30px; right:30px; z-index:2000;"></div>
 
-  <!-- ===== FOOTER ===== -->
-  <footer class="footer">
-    <p>Built with ❤️ and AI &nbsp;·&nbsp; Supports Gemini, OpenAI, OpenRouter, Cohere & Mistral &nbsp;·&nbsp; <a
-        href="https://dsingh92342.github.io/Black_News/" target="_blank">View on GitHub</a></p>
-    <p style="margin-top: 6px; font-size: 0.75rem; color: var(--text-muted);">Your API key never leaves your browser.
-      100% client-side.</p>
+  <footer style="text-align:center; padding: 40px; color: var(--text-muted); font-size: 0.85rem; border-top: 1px solid var(--border-glass);">
+    <p>Black News © 2026 · Powered by Open Source Intelligence</p>
   </footer>
 
   <script src="app.js"></script>
 </body>
-
 </html>
