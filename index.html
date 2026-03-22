@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="en" data-theme="dark">
+<html lang="en">
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
@@ -10,77 +10,68 @@
   <link rel="manifest" href="manifest.json" />
   <meta name="theme-color" content="#6c5ce7" />
   <link rel="stylesheet" href="style.css" />
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;600;800&family=Playfair+Display:wght@700;900&display=swap" rel="stylesheet">
 </head>
-<body>
+<body class="dark">
 
-  <!-- ===== HEADER ===== -->
-  <header class="header">
-    <div class="header-inner">
-      <a href="#" class="logo">
-        ⚡ Black<span>News</span>
-      </a>
-      <div class="header-actions">
-        <button class="icon-btn" id="themeToggle" title="Toggle Theme">🌙</button>
-        <button class="icon-btn" id="historyToggle" title="Article History">
-          📋 <span class="badge hidden" id="historyBadge">0</span>
+  <header>
+    <nav class="container nav-bar">
+      <div class="logo">
+        <span class="logo-icon">⚡</span> <span>Black</span> News
+      </div>
+      <div class="nav-actions">
+        <button class="icon-btn" id="themeToggle" title="Toggle Light/Dark Mode">🌓</button>
+        <button class="icon-btn" id="historyToggle" title="View History">
+          📜 History <span class="badge hidden" id="historyBadge">0</span>
         </button>
       </div>
-    </div>
+    </nav>
   </header>
 
-  <main class="main">
-    
-    <!-- Hero -->
-    <section class="hero" style="text-align:center; padding-bottom: 40px;">
-      <h1 style="font-family: var(--font-display); font-size: 3.5rem; font-weight: 900; margin-bottom: 12px; line-height: 1.1;">
-        The Future of <span style="background: var(--brand-gradient); -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text;">Intelligence</span>
-      </h1>
-      <p style="color: var(--text-dim); font-size: 1.2rem; max-width: 600px; margin: 0 auto;">
-        Experience AI-powered journalism on demand. Instant, accurate, and multi-lingual.
-      </p>
+  <main class="container">
+    <section class="hero">
+      <h1>The Future of <span>Intelligence</span></h1>
+      <p>Experience AI-powered journalism on demand. Instant, accurate, and multi-lingual.</p>
     </section>
 
-    <!-- API CONFIG -->
-    <section class="card api-section" id="apiSection">
-      <div class="api-header" id="apiHeader">
-        <div>
-          <h2 class="section-title">1. Engine Configuration</h2>
+    <section class="generator-workspace">
+      <!-- STEP 1: ENGINE -->
+      <div class="card">
+        <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom: 24px;">
+          <h2 class="section-title" style="margin-bottom:0;">1. Engine Configuration</h2>
           <div class="api-status disconnected" id="apiStatus">
             <span class="status-dot"></span> <span id="apiStatusText">Ready to connect</span>
           </div>
         </div>
-        <div style="font-size: 1.5rem;">🔌</div>
-      </div>
-
-      <div class="api-body" id="apiBody">
-        <div class="provider-chips" id="providerChips">
-          <button class="provider-chip active" data-provider="gemini">✦ Gemini</button>
-          <button class="provider-chip" data-provider="openai">◐ OpenAI</button>
+        
+        <div class="provider-chips" id="providerSelector">
+          <button class="provider-chip active" data-provider="gemini">✨ Gemini</button>
+          <button class="provider-chip" data-provider="openai">◑ OpenAI</button>
           <button class="provider-chip" data-provider="openrouter">⬡ Router</button>
           <button class="provider-chip" data-provider="cohere">◈ Cohere</button>
           <button class="provider-chip" data-provider="mistral">▣ Mistral</button>
         </div>
-        
-        <div class="api-input-group" style="margin-top: 24px; display: flex; gap: 12px;">
-          <div style="flex: 1; position: relative;">
-            <input type="password" class="topic-input" id="apiKeyInput" placeholder="Enter API Key..." style="margin-top:0; font-size: 0.9rem;" />
-            <button class="toggle-visibility" id="toggleKeyVisibility" style="position:absolute; right:15px; top:50%; transform:translateY(-50%); background:none; border:none; cursor:pointer; color:var(--text-muted);">👁️</button>
-          </div>
-          <button class="btn-generate" id="saveKeyBtn" style="padding: 12px 24px; font-size: 0.9rem; border-radius:12px;">Save</button>
-        </div>
-        
-        <p class="api-help" id="apiHelp" style="margin-top: 12px; font-size: 0.8rem; color: var(--text-muted);">
-          Key is stored locally & never shared. Get it at: <a href="#" id="apiHelpLink" target="_blank" style="color:var(--text-main); font-weight:600;">aistudio.google.com</a>
-        </p>
-      </div>
-    </section>
 
-    <!-- GENERATOR -->
-    <section id="generatorSection">
+        <div class="api-config-body" id="apiBody">
+          <div class="input-wrapper">
+            <input type="password" id="apiKeyInput" placeholder="Paste your API key here..." />
+            <div class="input-actions">
+              <button class="btn-sm" id="toggleKeyVisibility">👁️</button>
+              <button class="btn-save" id="saveKeyBtn">Save</button>
+            </div>
+          </div>
+          <p class="helper-text">Key is stored locally & never shared. Get it at: <a href="https://aistudio.google.com/apikey" target="_blank" id="apiKeyLink">aistudio.google.com</a></p>
+        </div>
+      </div>
+
+      <!-- STEP 2: TOPIC -->
       <div class="card">
         <h2 class="section-title">2. Topic & Category</h2>
         <div class="chip-group" id="categories" style="margin-bottom: 24px;">
-          <button class="pill-chip active" data-category="technology">Technology</button>
+          <button class="pill-chip active" data-category="all">All</button>
+          <button class="pill-chip" data-category="technology">Technology</button>
           <button class="pill-chip" data-category="business">Business</button>
           <button class="pill-chip" data-category="science">Science</button>
           <button class="pill-chip" data-category="health">Health</button>
@@ -152,22 +143,21 @@
 
   </main>
 
-  <!-- HISTORY -->
-  <div class="history-overlay" id="historyOverlay" style="position:fixed; inset:0; background:rgba(0,0,0,0.8); z-index:1001; opacity:0; pointer-events:none; transition:opacity 0.3s ease;"></div>
-  <aside class="history-panel" id="historyPanel" style="position:fixed; right:-400px; top:0; width:400px; height:100vh; background:var(--bg-surface); z-index:1002; transition:right 0.4s cubic-bezier(0.23, 1, 0.32, 1); border-left:1px solid var(--border-glass); padding:32px;">
+  <aside class="history-panel" id="historyPanel">
     <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:32px;">
-      <h2 style="font-family:var(--font-display); font-size:1.5rem;">History Archive</h2>
+      <h2 style="font-family:var(--font-display); font-size:1.5rem;">Archive</h2>
       <button class="icon-btn" id="closeHistory">✕</button>
     </div>
-    <div id="historyBody" style="overflow-y:auto; height:calc(100% - 150px);"></div>
+    <div id="historyBody" style="overflow-y:auto; flex:1;"></div>
     <div style="margin-top:24px;">
       <button class="btn-generate" id="clearHistoryBtn" style="width:100%; font-size:0.9rem; padding:12px; background:rgba(239,68,68,0.1); color:#ef4444; border:1px solid rgba(239,68,68,0.2); box-shadow:none;">Clear Archive</button>
     </div>
   </aside>
+  <div class="history-overlay" id="historyOverlay"></div>
 
-  <div id="toastContainer" style="position:fixed; bottom:30px; right:30px; z-index:2000;"></div>
+  <div id="toastContainer"></div>
 
-  <footer style="text-align:center; padding: 40px; color: var(--text-muted); font-size: 0.85rem; border-top: 1px solid var(--border-glass);">
+  <footer>
     <p>Black News © 2026 · Powered by Open Source Intelligence</p>
   </footer>
 
