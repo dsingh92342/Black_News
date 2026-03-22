@@ -46,7 +46,7 @@
 Pick any provider from the table above. **Recommended:** [Google Gemini](https://aistudio.google.com/apikey) (free).
 
 ### 2. Use Black News
-- Open the app: **[Live Demo →](https://yourusername.github.io/Black_News/)**
+- Open the app: **[Live Demo →](https://dsingh92342.github.io/Black_News/)**
 - Select your AI provider (Gemini, OpenAI, etc.)
 - Paste your API key → click **Save Key**
 - Pick a news category or type a custom topic
@@ -98,14 +98,13 @@ Black_News/
 1. **Fork** this repository
 2. Go to **Settings → Pages**
 3. Set source to **Deploy from a branch** → `main` → `/ (root)`
-4. Your site will be live at `https://yourusername.github.io/Black_News/`
+4. Your site will be live at `https://dsingh92342.github.io/Black_News/`
 
 ### Local Development
 
 ```bash
 # Clone the repo
-git clone https://github.com/yourusername/Black_News.git
-
+git clone https://dsingh92342.github.io/Black_News/
 # Open directly (no build step needed)
 open index.html
 # or use any local server:
