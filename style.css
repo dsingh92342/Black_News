@@ -118,6 +118,7 @@ body::before {
 .logo span {
   background: var(--brand-gradient);
   -webkit-background-clip: text;
+  background-clip: text;
   -webkit-text-fill-color: transparent;
 }
 
@@ -260,8 +261,8 @@ body::before {
 /* --- Actions Row --- */
 .generate-row {
   display: flex;
-  justify-content: space-between;
   align-items: center;
+  gap: 32px;
   margin-top: 40px;
   padding-top: 32px;
   border-top: 1px solid var(--border-glass);

@@ -269,6 +269,7 @@
       updateAPIStatus(true);
       const providerName = PROVIDERS[state.provider].name;
       showToast(`✅ ${providerName} API key saved`, 'success');
+      dom.generateBtn.disabled = false; // Ensure enabled
       // Collapse after short delay
       setTimeout(() => {
         dom.apiBody.classList.add('collapsed');
@@ -295,6 +296,7 @@
     if (currentKey) {
       dom.apiKeyInput.value = currentKey;
       updateAPIStatus(true);
+      dom.generateBtn.disabled = false;
       dom.apiBody.classList.add('collapsed');
     }
   }
@@ -475,7 +477,7 @@
       })
     });
 
-    handleHTTPError(response);
+    await handleHTTPError(response);
     const data = await response.json();
     const text = data?.candidates?.[0]?.content?.parts?.[0]?.text;
     if (!text) throw new Error('No content received from Gemini. Please try again.');
@@ -508,7 +510,7 @@
       })
     });
 
-    handleHTTPError(response);
+    await handleHTTPError(response);
     const data = await response.json();
     const text = data?.choices?.[0]?.message?.content;
     if (!text) throw new Error(`No content received from ${config.name}. Please try again.`);
@@ -534,7 +536,7 @@
       })
     });
 
-    handleHTTPError(response);
+    await handleHTTPError(response);
     const data = await response.json();
     const text = data?.message?.content?.[0]?.text;
     if (!text) throw new Error('No content received from Cohere. Please try again.');
@@ -758,13 +760,14 @@ Important rules:
     const text = `${article.headline}\n\n${article.summary}\n\n${article.body}\n\nSource: ${article.source}`;
     navigator.clipboard.writeText(text).then(() => {
       showToast('📋 Article copied to clipboard', 'success');
-      const btn = document.querySelector(`[data-id="${id}"] .article-btn:nth-child(2)`);
+      const btn = document.querySelector(`[data-id="${id}"] .action-btn:nth-child(4)`);
       if (btn) {
         btn.classList.add('copied');
+        const oldText = btn.innerHTML;
         btn.innerHTML = '✅ Copied!';
         setTimeout(() => {
           btn.classList.remove('copied');
-          btn.innerHTML = '📋 Copy';
+          btn.innerHTML = oldText;
         }, 2000);
       }
     }).catch(() => {
