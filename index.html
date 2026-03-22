@@ -1,0 +1,193 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="dark">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Black News — AI-Powered News Generator</title>
+  <meta name="description" content="Generate high-quality, AI-powered news articles on any topic using Google Gemini. Paste your API key and get instant news." />
+  <meta name="keywords" content="AI news, news generator, Gemini AI, artificial intelligence, news articles" />
+  <meta name="author" content="Black News" />
+  <meta property="og:title" content="Black News — AI-Powered News Generator" />
+  <meta property="og:description" content="Generate high-quality, AI-powered news articles on any topic using Google Gemini." />
+  <meta property="og:type" content="website" />
+  <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>📰</text></svg>" />
+  <link rel="stylesheet" href="style.css" />
+</head>
+<body>
+
+  <!-- ===== HEADER ===== -->
+  <header class="header">
+    <div class="header-inner">
+      <a href="#" class="logo" id="logo">
+        <div class="logo-icon">⚡</div>
+        <div class="logo-text">Black<span>News</span></div>
+      </a>
+      <div class="header-actions">
+        <button class="icon-btn" id="themeToggle" title="Toggle Theme" aria-label="Toggle theme">
+          🌙
+        </button>
+        <button class="icon-btn" id="historyToggle" title="Article History" aria-label="Open history">
+          📋
+          <span class="badge hidden" id="historyBadge">0</span>
+        </button>
+      </div>
+    </div>
+  </header>
+
+  <!-- ===== MAIN ===== -->
+  <main class="main">
+
+    <!-- Hero / Intro -->
+    <section style="text-align:center; margin-bottom: 40px; padding-top: 16px;">
+      <h1 style="font-family: var(--font-serif); font-size: 2.4rem; font-weight: 900; line-height: 1.2; margin-bottom: 12px;">
+        AI-Powered <span style="background: var(--accent-gradient); -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text;">News Generator</span>
+      </h1>
+      <p style="color: var(--text-secondary); font-size: 1.05rem; max-width: 540px; margin: 0 auto;">
+        Generate professional news articles on any topic instantly. Powered by Google Gemini AI.
+      </p>
+    </section>
+
+    <!-- API Key Section -->
+    <section class="api-section" id="apiSection">
+      <div class="api-header" id="apiHeader">
+        <div class="api-header-left">
+          <div class="api-icon">🔑</div>
+          <div>
+            <div class="api-title">API Configuration</div>
+            <div class="api-subtitle">Connect your Google Gemini API key</div>
+          </div>
+        </div>
+        <div class="api-status disconnected" id="apiStatus">
+          <span class="status-dot"></span>
+          <span id="apiStatusText">Not Connected</span>
+        </div>
+      </div>
+
+      <div class="api-body" id="apiBody">
+        <div class="api-input-group">
+          <div class="api-input-wrapper">
+            <input
+              type="password"
+              class="api-input"
+              id="apiKeyInput"
+              placeholder="Paste your Gemini API key here..."
+              autocomplete="off"
+              spellcheck="false"
+            />
+            <button class="toggle-visibility" id="toggleKeyVisibility" title="Show/Hide key" aria-label="Toggle key visibility">👁️</button>
+          </div>
+          <button class="btn-primary" id="saveKeyBtn">Save Key</button>
+          <button class="btn-danger hidden" id="removeKeyBtn">Remove</button>
+        </div>
+        <p class="api-help">
+          💡 Get your free API key at <a href="https://aistudio.google.com/apikey" target="_blank" rel="noopener noreferrer">aistudio.google.com</a>
+          — your key is stored locally and never shared.
+        </p>
+      </div>
+    </section>
+
+    <!-- Generator Section -->
+    <section class="generator" id="generatorSection">
+      <div class="generator-controls">
+        <p class="section-title">Choose a Category</p>
+        <div class="categories" id="categories">
+          <button class="category-chip active" data-category="technology">
+            <span class="chip-icon">💻</span> Technology
+          </button>
+          <button class="category-chip" data-category="business">
+            <span class="chip-icon">📈</span> Business
+          </button>
+          <button class="category-chip" data-category="science">
+            <span class="chip-icon">🔬</span> Science
+          </button>
+          <button class="category-chip" data-category="health">
+            <span class="chip-icon">🏥</span> Health
+          </button>
+          <button class="category-chip" data-category="sports">
+            <span class="chip-icon">⚽</span> Sports
+          </button>
+          <button class="category-chip" data-category="entertainment">
+            <span class="chip-icon">🎬</span> Entertainment
+          </button>
+          <button class="category-chip" data-category="politics">
+            <span class="chip-icon">🏛️</span> Politics
+          </button>
+          <button class="category-chip" data-category="world">
+            <span class="chip-icon">🌍</span> World
+          </button>
+        </div>
+
+        <div class="topic-group">
+          <p class="section-title">Or enter a custom topic</p>
+          <input
+            type="text"
+            class="topic-input"
+            id="topicInput"
+            placeholder="e.g., Artificial Intelligence in Healthcare, Space Exploration 2026..."
+          />
+        </div>
+
+        <div class="generate-row">
+          <div class="article-count">
+            <label>Articles:</label>
+            <div class="count-selector" id="countSelector">
+              <button class="count-btn" data-count="1">1</button>
+              <button class="count-btn" data-count="2">2</button>
+              <button class="count-btn active" data-count="3">3</button>
+              <button class="count-btn" data-count="4">4</button>
+              <button class="count-btn" data-count="5">5</button>
+            </div>
+          </div>
+          <button class="btn-generate" id="generateBtn" disabled>
+            <span class="btn-text">⚡ Generate News</span>
+            <span class="spinner"></span>
+          </button>
+        </div>
+      </div>
+    </section>
+
+    <!-- Results Section -->
+    <section class="results" id="resultsSection">
+      <div class="results-header hidden" id="resultsHeader">
+        <h2 class="section-title" style="margin-bottom:0;">Generated Articles</h2>
+        <span class="results-count" id="resultsCount"></span>
+      </div>
+      <div id="articlesContainer">
+        <!-- Empty state by default -->
+        <div class="empty-state" id="emptyState">
+          <div class="empty-icon">📰</div>
+          <div class="empty-title">No articles yet</div>
+          <div class="empty-subtitle">Select a category or enter a topic above, then hit Generate to create AI-powered news articles.</div>
+        </div>
+      </div>
+    </section>
+
+  </main>
+
+  <!-- ===== HISTORY SIDEBAR ===== -->
+  <div class="history-overlay" id="historyOverlay"></div>
+  <aside class="history-panel" id="historyPanel">
+    <div class="history-header">
+      <span class="history-title">📋 Article History</span>
+      <button class="icon-btn" id="closeHistory" aria-label="Close history">✕</button>
+    </div>
+    <div class="history-body" id="historyBody">
+      <div class="history-empty" id="historyEmpty">No saved articles yet.</div>
+    </div>
+    <div class="history-footer">
+      <button class="btn-danger" id="clearHistoryBtn" style="width:100%; text-align:center; justify-content: center; display:flex;">Clear All History</button>
+    </div>
+  </aside>
+
+  <!-- ===== TOAST CONTAINER ===== -->
+  <div class="toast-container" id="toastContainer"></div>
+
+  <!-- ===== FOOTER ===== -->
+  <footer class="footer">
+    <p>Built with ❤️ and Google Gemini AI &nbsp;·&nbsp; <a href="https://github.com" target="_blank">View on GitHub</a></p>
+    <p style="margin-top: 6px; font-size: 0.75rem; color: var(--text-muted);">Your API key never leaves your browser. 100% client-side.</p>
+  </footer>
+
+  <script src="app.js"></script>
+</body>
+</html>
