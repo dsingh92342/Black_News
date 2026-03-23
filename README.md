@@ -105,10 +105,6 @@ Black News is designed to be hosted for free on GitHub Pages:
 
 ---
 
-## 📄 License
-
-Distributed under the **MIT License**. See `LICENSE` for more information.
-
 ---
 
 <p align="center">
